@@ -1,0 +1,91 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Tag {
+  id              String            @id @unique @default(cuid())
+  name            String
+  reciepeTag      ReceipeTag[]
+  createdAt       DateTime          @default(now()) @map(name: "created_at")
+  updatedAt       DateTime          @updatedAt @map(name: "updated_at")
+  ReceipeCategory ReceipeCategory[]
+}
+
+model Category {
+  id        String   @id @unique @default(cuid())
+  name      String
+  createdAt DateTime @default(now()) @map(name: "created_at")
+  updatedAt DateTime @updatedAt @map(name: "updated_at")
+}
+
+model Receipe {
+  id              String            @id @unique @default(cuid())
+  name            String
+  description     String
+  images          String[]
+  ingridents      String[]
+  instruction     String[]
+  prepTime        Int?
+  cookTime        Int
+  cuisine         String
+  serves          String
+  notes           String[]
+  rating          Int?
+  reciepeTag      ReceipeTag[]
+  reciepeCategory ReceipeCategory[]
+  createdAt       DateTime          @default(now()) @map(name: "created_at")
+  updatedAt       DateTime          @updatedAt @map(name: "updated_at")
+}
+
+//many to many realtions for the tags-reciepe category-reciepe
+
+model ReceipeTag {
+  reciepeId String
+  tagId     String
+
+  reciepe Receipe @relation(fields: [reciepeId], references: [id])
+  tag     Tag     @relation(fields: [tagId], references: [id])
+
+  @@id([reciepeId, tagId])
+}
+
+model ReceipeCategory {
+  reciepeId  String
+  categoryId String
+
+  reciepe  Receipe @relation(fields: [reciepeId], references: [id])
+  category Tag     @relation(fields: [categoryId], references: [id])
+
+  @@id([reciepeId, categoryId])
+}
+
+model contactUs {
+  id        String   @id @unique @default(cuid())
+  name      String
+  email     String
+  message   String
+  createdAt DateTime @default(now()) @map(name: "created_at")
+}
+
+model aboutUs {
+  id        String   @id @unique @default(uuid())
+  name        String   
+  authorInfo  String
+  img         String
+  websiteInfo String[]
+  social      String[]
+}
+
+
+//author/owner/admin routes to be include 
