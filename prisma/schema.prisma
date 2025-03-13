@@ -14,60 +14,60 @@ datasource db {
 }
 
 model Tag {
-  id              String            @id @unique @default(cuid())
-  name            String
-  reciepeTag      ReceipeTag[]
-  createdAt       DateTime          @default(now()) @map(name: "created_at")
-  updatedAt       DateTime          @updatedAt @map(name: "updated_at")
-  ReceipeCategory ReceipeCategory[]
+  id        String      @id @unique @default(cuid())
+  name      String
+  recipes   RecipeTag[]
+  createdAt DateTime    @default(now()) @map(name: "created_at")
+  updatedAt DateTime    @updatedAt @map(name: "updated_at")
 }
 
 model Category {
-  id        String   @id @unique @default(cuid())
+  id        String           @id @unique @default(cuid())
   name      String
-  createdAt DateTime @default(now()) @map(name: "created_at")
-  updatedAt DateTime @updatedAt @map(name: "updated_at")
+  recipes   RecipeCategory[]
+  createdAt DateTime         @default(now()) @map(name: "created_at")
+  updatedAt DateTime         @updatedAt @map(name: "updated_at")
 }
 
-model Receipe {
-  id              String            @id @unique @default(cuid())
-  name            String
-  description     String
-  images          String[]
-  ingridents      String[]
-  instruction     String[]
-  prepTime        Int?
-  cookTime        Int
-  cuisine         String
-  serves          String
-  notes           String[]
-  rating          Int?
-  reciepeTag      ReceipeTag[]
-  reciepeCategory ReceipeCategory[]
-  createdAt       DateTime          @default(now()) @map(name: "created_at")
-  updatedAt       DateTime          @updatedAt @map(name: "updated_at")
+model Recipe {
+  id          String           @id @unique @default(cuid())
+  name        String
+  description String
+  images      String[]
+  ingredients  Json
+  instruction String[]
+  prepTime    Int? 
+  cookTime    Int
+  cuisine     String
+  serves      String
+  notes       String[]
+  rating      Int?
+  tags        RecipeTag[]
+  category    RecipeCategory[]
+  createdAt   DateTime         @default(now()) @map(name: "created_at")
+  updatedAt   DateTime         @updatedAt @map(name: "updated_at")
 }
 
-//many to many realtions for the tags-reciepe category-reciepe
+//many to many realtions for the tags-recipe category-recipe
 
-model ReceipeTag {
-  reciepeId String
-  tagId     String
+model RecipeTag {
+  recipeId String
+  tagId    String
 
-  reciepe Receipe @relation(fields: [reciepeId], references: [id])
-  tag     Tag     @relation(fields: [tagId], references: [id])
+  recipe Recipe @relation(fields: [recipeId], references: [id],onDelete: Cascade)
+  tag    Tag    @relation(fields: [tagId], references: [id],onDelete: Cascade)
 
-  @@id([reciepeId, tagId])
+  @@id([recipeId, tagId])
 }
 
-model ReceipeCategory {
-  reciepeId  String
+model RecipeCategory {
+  recipeId   String
   categoryId String
 
-  reciepe  Receipe @relation(fields: [reciepeId], references: [id])
-  category Tag     @relation(fields: [categoryId], references: [id])
+  recipe   Recipe   @relation(fields: [recipeId], references: [id],onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id],onDelete: Cascade)
 
-  @@id([reciepeId, categoryId])
+  @@id([recipeId, categoryId])
 }
 
 model contactUs {
@@ -79,13 +79,12 @@ model contactUs {
 }
 
 model aboutUs {
-  id        String   @id @unique @default(uuid())
-  name        String   
+  id          String   @id @unique @default(uuid())
+  name        String
   authorInfo  String
   img         String
   websiteInfo String[]
   social      String[]
 }
-
 
 //author/owner/admin routes to be include 
