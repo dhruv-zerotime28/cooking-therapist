@@ -2,6 +2,17 @@ import { NextRequest, NextResponse } from 'next/server';
 import { reciepeDataSchema } from '@/Schemas/recipes';
 import { validateRequest } from '@/lib/validate';
 import prisma from '@/db/prisma';
+import { reciepeIdType } from '@/Schemas/recipes';
+
+
+interface ITag {
+  id : string,
+  name : string
+}
+interface ICat {
+  id : string,
+  name : string
+}
 
 export async function GET() {
   try {
@@ -38,27 +49,36 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-
+    
     const validated = validateRequest(reciepeDataSchema, body);
     if (validated instanceof NextResponse) {
       return validated;
     }
-
-    const { recipeTag, recipeCategory, ...recipedata } = body;
     
+    const {relatedRecipes,recipeTag, recipeCategory, ...recipedata } = body;
+    
+    
+    recipedata.images = [
+      'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&q=80&w=800',
+      'https://images.unsplash.com/photo-1624353365286-3f8d62daad51?auto=format&fit=crop&q=80&w=800',
+      'https://images.unsplash.com/photo-1485921325833-c519f76c4927?auto=format&fit=crop&q=80&w=800',
+    ]
+
+    console.log(relatedRecipes,recipeTag, recipeCategory,recipedata)
     const recipe = await prisma.$transaction(async (tx) => {
      
       const newRecipe = await tx.recipe.create({
-        data: { ...recipedata },
+        data: { ...recipedata,
+         },
       });
     
       //also here we can check weather the all the tags and category are there or not
      
       if (recipeTag.length > 0) {
         await tx.recipeTag.createMany({
-          data: recipeTag.map((tagId: string) => ({
+          data: recipeTag.map((tagId:ITag) => ({
             recipeId: newRecipe.id,
-            tagId,
+            tagId : tagId.id,
           })),
         });
       }
@@ -66,13 +86,12 @@ export async function POST(request: NextRequest) {
       
       if (recipeCategory.length > 0) {
         await tx.recipeCategory.createMany({
-          data: recipeCategory.map((categoryId: string) => ({
+          data: recipeCategory.map((categoryId: ICat) => ({
             recipeId: newRecipe.id,
-            categoryId,
+            categoryId:categoryId.id,
           })),
         });
-      }
-    
+      }    
      
       return tx.recipe.findUnique({
         where: { id: newRecipe.id },
@@ -81,9 +100,10 @@ export async function POST(request: NextRequest) {
     }); 
 
     return NextResponse.json(
-      { success: true, message: `New user Created ${recipe}` },
+      { success: true, message: `New Reciepe Added`},
       { status: 201 }
     )
+    
   } catch (error) {
     console.log('err while adding recipe:',error)
     return NextResponse.json(
@@ -97,7 +117,7 @@ export async function PATCH(request: NextRequest) {
   try {
     const body = await request.json();
     
-    const updatedRecipes = await prisma.category.update({
+    const updatedRecipes = await prisma.recipe.update({
       where: {
         id: body.id,
       },
@@ -122,26 +142,41 @@ export async function PATCH(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
-  return new Response(JSON.stringify({}), {
-    status: 200,
-    headers: { 'Content-Type': 'application/json' },
-  });
-}
+  try {
+    const body = await request.json();
 
-// const recipe = await prisma.recipe.create({
-    //   data:{
-    //     ...recipedata,
-    //     recipeTag: {
-    //       create: recipeTag.map((tagId : string) => ({
-    //         tag: { connect: { id: tagId } },
-    //       })),
-    //     },
-    //     recipeCategory: {
-    //       create: recipeCategory.map((categoryId : string) => ({
-    //         category: { connect: { id: categoryId } },
-    //       }))
-    //     }
-    //   },
-    //    include: { recipeTag: true, recipeCategory: true },
-    // })
-    //works in case of implicit
+    const validate = validateRequest(reciepeIdType, body);
+    if (validate instanceof NextResponse) {
+      return validate;
+    }
+
+    const checkItem = await prisma.recipe.findFirst({
+      where:{
+        ...body
+      }
+    })
+
+    if(!checkItem){
+      return NextResponse.json(
+        { success: false, message:"Coundn't find the recipe!!" },
+        { status: 500 }
+      );
+    }
+
+    await prisma.recipe.delete({
+      where: {
+        ...body,
+      },
+    });
+    return NextResponse.json(
+      { success: true, message: `Recipe deleted sucessfully!` },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json(
+      { success: false, message: 'Internal Server Error' },
+      { status: 500 }
+    );
+  }
+}

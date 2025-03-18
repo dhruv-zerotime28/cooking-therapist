@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import {
@@ -20,50 +20,64 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Plus, Pencil, Trash } from 'lucide-react';
 import { toast } from 'sonner';
+import { getAllCategories,updatedCategory,deleteCategory, addNewCategory } from '@/actions/admin/categories-actions';
+import { adminCategoryType } from '@/Schemas/categories';
+import { deleteReciepe } from '@/actions/admin/recipes-actions';
 
-const initialCategories = [
-  {
-    id: 1,
-    name: 'Breakfast',
-    description: 'Start your day with these delicious breakfast recipes',
-    count: 15,
-  },
-  {
-    id: 2,
-    name: 'Dinner',
-    description: 'Perfect dinner recipes for any occasion',
-    count: 25,
-  },
-];
+
 
 export default function CategoriesPage() {
-  const [categories, setCategories] = useState(initialCategories);
+  const [categories, setCategories] = useState<adminCategoryType[]>()
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<any>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+
+  useEffect(()=>{
+    const getCategoryDetails = async ()=>{
+      try {
+        const category : adminCategoryType[] = await getAllCategories();
+        setCategories(category)
+      } catch (error) {
+        toast.error('err while fetching category!')
+      }
+    }
+    getCategoryDetails();
+  },[])
+
+  const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
-    const categoryData = {
-      id: editingCategory?.id || Date.now(),
-      name: formData.get('name') as string,
-      description: formData.get('description') as string,
-      count: editingCategory?.count || 0,
-    };
 
-    if (editingCategory) {
-      setCategories(categories.map(category => 
-        category.id === editingCategory.id ? categoryData : category
-      ));
-      toast.success('Category updated successfully');
-    } else {
-      setCategories([...categories, categoryData]);
-      toast.success('Category added successfully');
+    if(editingCategory){
+      try {
+        const updateData = {
+          id : editingCategory.id,
+          name : formData.get('name') as string,
+        }
+        const UpdateCategory:any = await updatedCategory(updateData)
+        toast.success(UpdateCategory.message)
+        
+        //set updated list
+        const category : adminCategoryType[] = await getAllCategories();
+        setCategories(category)
+      } catch (error) {
+         toast.error('show err here')
+      }
+    }else{
+      try {
+        const name = formData.get('name') as string;
+        const addCategory:any = await addNewCategory(name)
+        toast.success(addCategory.message)
+        
+          //set updated list
+        const category : adminCategoryType[] = await getAllCategories();
+        setCategories(category)
+      } catch (error:any) {
+        toast.error(error)
+      }
     }
-
     setIsDialogOpen(false);
     setEditingCategory(null);
   };
@@ -73,10 +87,16 @@ export default function CategoriesPage() {
     setIsDialogOpen(true);
   };
 
-  const handleDelete = (id: number) => {
-    if (confirm('Are you sure you want to delete this category?')) {
-      setCategories(categories.filter(category => category.id !== id));
-      toast.success('Category deleted successfully');
+  const handleDelete = async(id:string) => {
+    try {
+      const res : any = await deleteReciepe(id);
+      toast.success(res.message)
+
+      //set updated list
+      const category : adminCategoryType[] = await getAllCategories();
+      setCategories(category)
+    } catch (error:any) {
+      toast.error(error)
     }
   };
 
@@ -107,15 +127,6 @@ export default function CategoriesPage() {
                   required
                 />
               </div>
-              <div>
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  name="description"
-                  defaultValue={editingCategory?.description}
-                  required
-                />
-              </div>
               <Button type="submit" className="w-full">
                 {editingCategory ? 'Update Category' : 'Add Category'}
               </Button>
@@ -129,16 +140,14 @@ export default function CategoriesPage() {
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
-              <TableHead>Description</TableHead>
               <TableHead>Recipe Count</TableHead>
               <TableHead className="w-[100px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {categories.map((category) => (
+            {categories && categories.map((category) => (
               <TableRow key={category.id}>
                 <TableCell>{category.name}</TableCell>
-                <TableCell>{category.description}</TableCell>
                 <TableCell>{category.count} recipes</TableCell>
                 <TableCell>
                   <div className="flex space-x-2">

@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { validateRequest } from '@/lib/validate';
 import prisma from '@/db/prisma';
-import { tagReq, tag } from '@/Schemas/tags';
+import { tagReq, tag, deleteTagReqType } from '@/Schemas/tags';
+
 
 export async function GET() {
   try {
@@ -9,10 +10,22 @@ export async function GET() {
       select: {
         id: true,
         name: true,
+        _count: {
+          select: { recipes: true },
+        },
       },
     });
 
-    return NextResponse.json({ success: true, data: tags }, { status: 201 });
+    const simplifiedResult = tags.map((tag) => ({
+      id: tag.id,
+      name: tag.name,
+      count: tag._count.recipes, // Extract the number
+    }));
+
+    return NextResponse.json(
+      { success: true, data: simplifiedResult },
+      { status: 201 }
+    );
   } catch (error) {
     console.log(error);
     return NextResponse.json(
@@ -54,17 +67,31 @@ export async function DELETE(request: NextRequest) {
   try {
     const body = await request.json();
 
-    const validate = validateRequest(tag, body);
+    const validate = validateRequest(deleteTagReqType, body);
     if (validate instanceof NextResponse) {
       return validate;
     }
+
+    const checkItem = await prisma.tag.findFirst({
+      where:{
+        ...body
+      }
+    })
+
+    if(!checkItem){
+      return NextResponse.json(
+        { success: false, message:"Coundn't find the recipe!!" },
+        { status: 500 }
+      );
+    }
+
     await prisma.tag.delete({
       where: {
         ...body,
       },
     });
     return NextResponse.json(
-      { success: true, message: `category deleted sucessfully!` },
+      { success: true, message: `tag deleted sucessfully!` },
       { status: 200 }
     );
   } catch (error) {
@@ -84,6 +111,20 @@ export async function PATCH(request: NextRequest) {
     if (validate instanceof NextResponse) {
       return validate;
     }
+
+    const checkItem = await prisma.tag.findFirst({
+      where:{
+        ...body
+      }
+    })
+
+    if(!checkItem){
+      return NextResponse.json(
+        { success: false, message:"Coundn't find the recipe!!" },
+        { status: 500 }
+      );
+    }
+    
     await prisma.tag.update({
       where: {
         id: body.id,

@@ -39,7 +39,7 @@ model Recipe {
   prepTime    Int? 
   cookTime    Int
   cuisine     String
-  serves      String
+  serves      String  //update it to num
   notes       String[]
   rating      Int?
   tags        RecipeTag[]

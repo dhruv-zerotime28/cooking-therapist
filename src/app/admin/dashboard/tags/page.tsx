@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import {
@@ -22,36 +22,62 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Plus, Pencil, Trash } from 'lucide-react';
 import { toast } from 'sonner';
-
-const initialTags = [
-  { id: 1, name: 'Italian', count: 12 },
-  { id: 2, name: 'Healthy', count: 8 },
-  { id: 3, name: 'Quick', count: 15 },
-  { id: 4, name: 'Dessert', count: 10 },
-];
+import { adminTagsType } from '@/Schemas/tags';
+import {
+  getAllTags,
+  updateTag,
+  deleteTag,
+  addNewTag,
+} from '@/actions/admin/tags-actions';
 
 export default function TagsPage() {
-  const [tags, setTags] = useState(initialTags);
+  const [tags, setTags] = useState<adminTagsType[]>();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingTag, setEditingTag] = useState<any>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    const getTagDetails = async () => {
+      try {
+        const tagsdetails: adminTagsType[] = await getAllTags();
+        setTags(tagsdetails);
+      } catch (error) {
+        toast.error('err while fetching category!');
+      }
+    };
+    getTagDetails();
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
-    const tagData = {
-      id: editingTag?.id || Date.now(),
-      name: formData.get('name') as string,
-      count: editingTag?.count || 0,
-    };
 
     if (editingTag) {
-      setTags(tags.map(tag => 
-        tag.id === editingTag.id ? tagData : tag
-      ));
-      toast.success('Tag updated successfully');
+      try {
+        const updateData = {
+          id: editingTag.id,
+          name: formData.get('name') as string,
+        };
+        const Updatetags: any = await updateTag(updateData);
+        toast.success(Updatetags.message);
+
+        //set updated list
+        const tagsupdated: adminTagsType[] = await getAllTags();
+        setTags(tagsupdated);
+      } catch (error) {
+        toast.error('show err here');
+      }
     } else {
-      setTags([...tags, tagData]);
-      toast.success('Tag added successfully');
+      try {
+        const name = formData.get('name') as string;
+        const addTags: any = await addNewTag(name);
+        toast.success(addTags.message);
+
+        //set updated list
+        const tagsupdated: adminTagsType[] = await getAllTags();
+        setTags(tagsupdated);
+      } catch (error: any) {
+        toast.error(error);
+      }
     }
 
     setIsDialogOpen(false);
@@ -63,15 +89,21 @@ export default function TagsPage() {
     setIsDialogOpen(true);
   };
 
-  const handleDelete = (id: number) => {
-    if (confirm('Are you sure you want to delete this tag?')) {
-      setTags(tags.filter(tag => tag.id !== id));
-      toast.success('Tag deleted successfully');
+  const handleDelete = async (id: string) => {
+    try {
+      const res: any = await deleteTag(id);
+      toast.success(res.message);
+
+      //set updated list
+      const tagsupdated: adminTagsType[] = await getAllTags();
+      setTags(tagsupdated);
+    } catch (error: any) {
+      toast.error(error);
     }
   };
 
   return (
-    <div className='w-full p-4 m-2'>
+    <div className="w-full p-4 m-2">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Tags</h1>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -83,7 +115,9 @@ export default function TagsPage() {
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>{editingTag ? 'Edit Tag' : 'Add New Tag'}</DialogTitle>
+              <DialogTitle>
+                {editingTag ? 'Edit Tag' : 'Add New Tag'}
+              </DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
@@ -113,30 +147,33 @@ export default function TagsPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {tags.map((tag) => (
-              <TableRow key={tag.id}>
-                <TableCell>{tag.name}</TableCell>
-                <TableCell>{tag.count} recipes</TableCell>
-                <TableCell>
-                  <div className="flex space-x-2">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleEdit(tag)}
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDelete(tag.id)}
-                    >
-                      <Trash className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
+            {tags && tags?.length > 0 ?
+              tags.map((tag) => (
+                <TableRow key={tag.id}>
+                  <TableCell>{tag.name}</TableCell>
+                  <TableCell>{tag.count} recipes</TableCell>
+                  <TableCell>
+                    <div className="flex space-x-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleEdit(tag)}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleDelete(tag.id)}
+                      >
+                        <Trash className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              )):
+              <p className='text-center text-2xl'>No tags as of now add some</p>
+              }
           </TableBody>
         </Table>
       </Card>

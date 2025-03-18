@@ -1,3 +1,4 @@
+import { count } from "console";
 import { z } from "zod";
 
 export const tag = z.object({
@@ -8,3 +9,15 @@ export const tag = z.object({
 export const tagReq = tag.omit({
     id:true
 })
+
+export const deleteTagReqType = tag.omit({
+    name:true
+})
+
+export type tagType = z.infer<typeof tag>;
+
+const tagsAdminDetails = tag.extend({
+    count : z.number().nonnegative({message:"count can't be negative"})
+})
+
+export type adminTagsType = z.infer<typeof tagsAdminDetails>

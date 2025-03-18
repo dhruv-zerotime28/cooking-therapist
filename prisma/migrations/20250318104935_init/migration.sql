@@ -24,7 +24,7 @@ CREATE TABLE "Recipe" (
     "name" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "images" TEXT[],
-    "ingridents" JSONB NOT NULL,
+    "ingredients" JSONB NOT NULL,
     "instruction" TEXT[],
     "prepTime" INTEGER,
     "cookTime" INTEGER NOT NULL,
