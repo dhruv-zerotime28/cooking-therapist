@@ -94,7 +94,7 @@ export default function MessagesPage() {
               <TableHead>Message</TableHead>
               <TableHead>Date</TableHead>
               <TableHead className="w-[100px]">Actions</TableHead>
-            </TableRow> </TableHeader>
+            </TableRow></TableHeader>
           <TableBody>
             {messages.map((message) => (
               <TableRow key={message.id}>

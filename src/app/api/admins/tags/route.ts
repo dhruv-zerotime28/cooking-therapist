@@ -27,7 +27,6 @@ export async function GET() {
       { status: 201 }
     );
   } catch (error) {
-    console.log(error);
     return NextResponse.json(
       { success: false, message: 'Internal Server Error' },
       { status: 500 }
@@ -44,18 +43,18 @@ export async function POST(request: NextRequest) {
       return validate;
     }
 
+    //add unique constrain for name check
     const newTag = await prisma.tag.create({
       data: {
         name: body.name,
       },
     });
-    console.log('new Tag created:', newTag);
+
     return NextResponse.json(
       { success: true, message: `New tag Created` },
       { status: 201 }
     );
   } catch (error) {
-    console.log(error);
     return NextResponse.json(
       { success: false, message: 'Internal Server Error' },
       { status: 500 }
@@ -80,7 +79,7 @@ export async function DELETE(request: NextRequest) {
 
     if(!checkItem){
       return NextResponse.json(
-        { success: false, message:"Coundn't find the recipe!!" },
+        { success: false, message:"Coundn't find the tag!" },
         { status: 500 }
       );
     }
@@ -95,7 +94,6 @@ export async function DELETE(request: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
-    console.log(error);
     return NextResponse.json(
       { success: false, message: 'Internal Server Error' },
       { status: 500 }
@@ -114,13 +112,13 @@ export async function PATCH(request: NextRequest) {
 
     const checkItem = await prisma.tag.findFirst({
       where:{
-        ...body
+        id : body.id
       }
     })
 
     if(!checkItem){
       return NextResponse.json(
-        { success: false, message:"Coundn't find the recipe!!" },
+        { success: false, message:"Coundn't find the tag!" },
         { status: 500 }
       );
     }
@@ -138,7 +136,6 @@ export async function PATCH(request: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
-    console.log(error);
     return NextResponse.json(
       { success: false, message: 'Internal Server Error!' },
       { status: 500 }

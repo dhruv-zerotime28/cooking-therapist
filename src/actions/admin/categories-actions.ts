@@ -1,9 +1,7 @@
 'use server';
-import axios from 'axios';
-import { apiRequest } from '@/lib/axiosClient';
-import { categoryType, adminCategoryType } from '@/Schemas/categories';
-import { IApiResponse } from '@/lib/axiosClient';
 
+import { apiRequest } from '@/lib/axiosClient';
+import { IApiResponse } from '@/lib/axiosClient';
 
 export const getAllCategories = async () => {
   try {

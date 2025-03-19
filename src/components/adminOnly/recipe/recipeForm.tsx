@@ -167,7 +167,7 @@ export default function RecipeForm({
       try {
         const res: any = await updateRecipe(data);
         toast.success(res.message);
-        router.push('/admin/dashboard/recipes');
+        router.push('/admin/dashboard/recipeLists');
       } catch (error) {
         console.log(error);
         toast.error('Something went wrong');
@@ -177,7 +177,7 @@ export default function RecipeForm({
         const res: any = await addRecipe(data);
         console.log('client', res);
         toast.success(res);
-        router.push('/admin/dashboard/recipes');
+        router.push('/admin/dashboard/recipeLists');
       } catch (error) {
         console.log(error);
         toast.error('Something went wrong');

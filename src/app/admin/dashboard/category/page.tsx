@@ -24,9 +24,6 @@ import { Plus, Pencil, Trash } from 'lucide-react';
 import { toast } from 'sonner';
 import { getAllCategories,updatedCategory,deleteCategory, addNewCategory } from '@/actions/admin/categories-actions';
 import { adminCategoryType } from '@/Schemas/categories';
-import { deleteReciepe } from '@/actions/admin/recipes-actions';
-
-
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState<adminCategoryType[]>()
@@ -71,7 +68,7 @@ export default function CategoriesPage() {
         const addCategory:any = await addNewCategory(name)
         toast.success(addCategory.message)
         
-          //set updated list
+        //set updated list
         const category : adminCategoryType[] = await getAllCategories();
         setCategories(category)
       } catch (error:any) {
@@ -89,7 +86,7 @@ export default function CategoriesPage() {
 
   const handleDelete = async(id:string) => {
     try {
-      const res : any = await deleteReciepe(id);
+      const res : any = await deleteCategory(id);
       toast.success(res.message)
 
       //set updated list
@@ -145,7 +142,7 @@ export default function CategoriesPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {categories && categories.map((category) => (
+            {categories ? categories.map((category) => (
               <TableRow key={category.id}>
                 <TableCell>{category.name}</TableCell>
                 <TableCell>{category.count} recipes</TableCell>
@@ -168,7 +165,11 @@ export default function CategoriesPage() {
                   </div>
                 </TableCell>
               </TableRow>
-            ))}
+            )):
+            <TableRow>
+                  <TableCell>No Categories as of now add some</TableCell>
+             </TableRow>
+            }
           </TableBody>
         </Table>
       </Card>

@@ -86,13 +86,13 @@ export async function DELETE(request: NextRequest) {
     //check first does id exits or not also take care of related table id's
     const checkItem = await prisma.category.findFirst({
       where: {
-        ...body,
+        id : body.id,
       },
     });
 
     if (!checkItem) {
       return NextResponse.json(
-        { success: false, message: "Coundn't find the recipe!!" },
+        { success: false, message: "Coundn't find the category!" },
         { status: 500 }
       );
     }
@@ -127,7 +127,7 @@ export async function PATCH(request: NextRequest) {
     //addition check if id exists or not
     const checkItem = await prisma.category.findFirst({
       where: {
-        ...body,
+        id : body.id,
       },
     });
 

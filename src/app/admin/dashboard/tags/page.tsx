@@ -172,7 +172,9 @@ export default function TagsPage() {
                   </TableCell>
                 </TableRow>
               )):
-              <p className='text-center text-2xl'>No tags as of now add some</p>
+              <TableRow>
+                  <TableCell>No tags as of now add some</TableCell>
+              </TableRow>
               }
           </TableBody>
         </Table>
