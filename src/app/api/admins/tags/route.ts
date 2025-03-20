@@ -44,6 +44,22 @@ export async function POST(request: NextRequest) {
     }
 
     //add unique constrain for name check
+    const checkSameName = await prisma.tag.findFirst({
+      where:{
+        name :{
+          mode : 'insensitive',
+          equals : body.name,
+        }
+      }
+    })
+
+    if(checkSameName){
+      return NextResponse.json(
+        { success: false, message: 'tags with sameName exits' },
+        { status: 409 }
+      );
+    }
+
     const newTag = await prisma.tag.create({
       data: {
         name: body.name,
@@ -80,7 +96,7 @@ export async function DELETE(request: NextRequest) {
     if(!checkItem){
       return NextResponse.json(
         { success: false, message:"Coundn't find the tag!" },
-        { status: 500 }
+        { status: 422 }
       );
     }
 
@@ -94,6 +110,7 @@ export async function DELETE(request: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
+    console.log(error)
     return NextResponse.json(
       { success: false, message: 'Internal Server Error' },
       { status: 500 }
@@ -119,7 +136,7 @@ export async function PATCH(request: NextRequest) {
     if(!checkItem){
       return NextResponse.json(
         { success: false, message:"Coundn't find the tag!" },
-        { status: 500 }
+        { status: 422 }
       );
     }
     

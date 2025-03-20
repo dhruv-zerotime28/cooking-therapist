@@ -1,5 +1,5 @@
-import { tagType } from '@/Schemas/tags';
-import axios from 'axios';
+"use server";
+
 import { IApiResponse } from '@/lib/axiosClient';
 import { apiRequest } from '@/lib/axiosClient';
 
