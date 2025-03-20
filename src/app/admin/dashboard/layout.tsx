@@ -41,7 +41,7 @@ export default function dashBoardLayout({
                   <Breadcrumb>
                     <BreadcrumbList>
                       <BreadcrumbItem className="hidden md:block">
-                        <BreadcrumbLink href="/dashboard">
+                        <BreadcrumbLink href="/admin/dashboard">
                           dashboard
                         </BreadcrumbLink>
                       </BreadcrumbItem>

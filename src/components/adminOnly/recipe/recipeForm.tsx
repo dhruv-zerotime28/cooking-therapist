@@ -21,14 +21,10 @@ import { addRecipe, updateRecipe } from '@/actions/admin/recipes-actions';
 import { recipeForm } from '@/Schemas/recipes';
 import { tagType } from '@/Schemas/tags';
 import { categoryType } from '@/Schemas/categories';
+import { reactSelectStyles } from '@/components/ui/react-select';
 
 type RecipeFormData = z.infer<typeof recipeForm>;
 
-const recipeOptions = [
-  { value: '1', label: 'Classic Homemade Pizza' },
-  { value: '2', label: 'Avocado Toast' },
-  { value: '3', label: 'Chocolate Chip Cookies' },
-];
 
 interface RecipeFormProps {
   initialData?: any;
@@ -63,9 +59,6 @@ export default function RecipeForm({
             initialData.category.includes(cat.name)
           ),
           tags: tagOptions.filter((tag) => initialData.tags.includes(tag.name)),
-          relatedRecipes: recipeOptions.filter((recipe) =>
-            initialData.relatedRecipes.includes(recipe.value)
-          ),
           ingredients: initialData.ingredients || [],
           instruction: initialData.instruction || [],
           notes: initialData.notes || [],
@@ -79,9 +72,6 @@ export default function RecipeForm({
           relatedRecipes: [],
         },
   });
-
-  console.log('form err:', errors);
-  // console.log("inside form ",tagOptions,categoryOptions)
 
   const { getRootProps, getInputProps } = useDropzone({
     accept: {
@@ -160,8 +150,8 @@ export default function RecipeForm({
       'notes',
       notes.filter((_, i) => i !== index)
     );
-  };
-
+  };  
+  
   const onSubmit = async (data: RecipeFormData) => {
     if (initialData) {
       try {
@@ -215,7 +205,7 @@ export default function RecipeForm({
                 </div>
 
                 <div className="col-span-2">
-                  <Label htmlFor="description">Description</Label>
+                  <Label htmlFor="description" >Description</Label>
                   <Textarea
                     id="description"
                     {...register('description')}
@@ -246,6 +236,7 @@ export default function RecipeForm({
                         className="react-select"
                         classNamePrefix="react-select"
                         placeholder="Select categories"
+                        styles={reactSelectStyles}
                         onChange={(selected) =>
                           field.onChange(
                             selected.map((item) => {
@@ -366,6 +357,7 @@ export default function RecipeForm({
                         className="react-select"
                         classNamePrefix="react-select"
                         placeholder="Select tags"
+                        styles={reactSelectStyles}
                       />
                     )}
                   />

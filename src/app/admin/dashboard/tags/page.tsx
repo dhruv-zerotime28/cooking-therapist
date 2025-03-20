@@ -41,11 +41,11 @@ export default function TagsPage() {
         const tagsdetails: adminTagsType[] = await getAllTags();
         setTags(tagsdetails);
       } catch (error) {
-        toast.error('err while fetching category!');
+        toast.error('err while fetching Tags!');
       }
     };
     getTagDetails();
-  }, []);
+  },[]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
