@@ -18,7 +18,6 @@ export async function GET() {
         },
       },
     });
-
     const simplifiedResult = categories.map((category) => ({
       id: category.id,
       name: category.name,
@@ -50,6 +49,22 @@ export async function POST(request: NextRequest) {
     if (validate instanceof NextResponse) {
       return validate;
     }
+    
+    const checkSameName = await prisma.category.findFirst({
+      where:{
+        name :{
+          mode : 'insensitive',
+          equals : body.name,
+        }
+      }
+    })
+
+    if(checkSameName){
+      return NextResponse.json(
+        { success: false, message: 'category with sameName exits' },
+        { status: 409 }
+      );
+    }
 
     const newCategory = await prisma.category.create({
       data: {
@@ -62,7 +77,7 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json(
-      { success: true, message: `New category Created` },
+      { success: true, message: `New category Created`},
       { status: 201 }
     );
   } catch (error) {
@@ -93,7 +108,7 @@ export async function DELETE(request: NextRequest) {
     if (!checkItem) {
       return NextResponse.json(
         { success: false, message: "Coundn't find the category!" },
-        { status: 500 }
+        { status: 422 }
       );
     }
 
@@ -133,8 +148,8 @@ export async function PATCH(request: NextRequest) {
 
     if (!checkItem) {
       return NextResponse.json(
-        { success: false, message: "Coundn't find the recipe!!" },
-        { status: 500 }
+        { success: false, message: "Unable find the category!!" },
+        { status: 422 }
       );
     }
 

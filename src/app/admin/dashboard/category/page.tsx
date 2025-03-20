@@ -142,7 +142,7 @@ export default function CategoriesPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {categories ? categories.map((category) => (
+            {categories && categories?.length > 0 ? categories.map((category) => (
               <TableRow key={category.id}>
                 <TableCell>{category.name}</TableCell>
                 <TableCell>{category.count} recipes</TableCell>

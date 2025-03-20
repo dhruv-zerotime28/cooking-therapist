@@ -9,7 +9,7 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata: Metadata = {
   title: 'Cooking Therapist - Explore the World of Flavors',
   description: 'Discover delicious recipes and culinary inspiration with Cooking Therapist',
-  icons:'/fav.png'
+  icons:'/icon.png'
 };
 
 export default function RootLayout({
