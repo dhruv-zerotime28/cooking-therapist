@@ -1,5 +1,5 @@
 'use server';
-import axios from 'axios';
+
 import { apiRequest } from '@/lib/axiosClient';
 import { IApiResponse } from '@/lib/axiosClient';
 
@@ -54,3 +54,16 @@ export const deleteReciepe = async (id : string)=>{
     return error;
   }
 }
+
+export const getFilteredData = async (data: any) => {
+  try {
+    const response: IApiResponse = await apiRequest({
+      method: 'POST',
+      url: '/admins/recipe/[slugs]',  // add slug here 
+      data: data
+    });
+    return response.message;
+  } catch (error) {
+    return error;
+  }
+};

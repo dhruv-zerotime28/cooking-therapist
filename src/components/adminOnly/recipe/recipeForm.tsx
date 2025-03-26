@@ -551,7 +551,7 @@ export default function RecipeForm({
           >
             Cancel
           </Button>
-          <Button type="submit">
+          <Button type="submit" disabled = {!isValid}>
             {initialData ? 'Update Recipe' : 'Create Recipe'}
           </Button>
         </div>
@@ -587,38 +587,4 @@ export default function RecipeForm({
                 </div> */
 }
 
-// const recipeSchema = z.object({
-//   name: z.string().min(1, 'name is required'),
-//   description: z.string().min(1, 'Description is required'),
-//   category: z.array(z.object({ value: z.string(), label: z.string() })),
-//   cuisine: z.string().min(1, 'Cuisine is required'),
-//   prepTime: z.string().min(1, 'Prep time is required'),
-//   cookTime: z.string().min(1, 'Cook time is required'),
-//   serves: z.number().min(1, 'serves must be at least 1'),
-//   rating: z.number().min(0).max(5).optional(),
-//   tags: z.array(z.object({ value: z.string(), label: z.string() })),
-//   relatedRecipes: z.array(z.object({ value: z.string(), label: z.string()})),
-//   ingredients: z.array(z.object({
-//     name: z.string().min(1, 'Ingredient name is required'),
-//     quantity: z.string().min(1, 'Quantity is required')
-//   })).min(1,"Ingredients can't be empty"),
-//   instruction: z.array(z.string()).min(1, 'Instruction is required'),
-//   notes: z.array(z.string())
-// });
 
-// const categoryOptions = [
-//   { value: 'breakfast', label: 'Breakfast' },
-//   { value: 'lunch', label: 'Lunch' },
-//   { value: 'dinner', label: 'Dinner' },
-//   { value: 'dessert', label: 'Dessert' },
-//   { value: 'snack', label: 'Snack' },
-// ];
-
-// const tagOptions = [
-//   { value: 'vegetarian', label: 'Vegetarian' },
-//   { value: 'vegan', label: 'Vegan' },
-//   { value: 'gluten-free', label: 'Gluten-Free' },
-//   { value: 'quick', label: 'Quick' },
-//   { value: 'easy', label: 'Easy' },
-//   { value: 'healthy', label: 'Healthy' },
-// ];

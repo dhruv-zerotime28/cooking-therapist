@@ -33,7 +33,7 @@ export async function GET() {
         tags :true,
         category:true
       },
-    })
+    })        //add the pagaination and filters options and incremental sending 
     return NextResponse.json(
       { success: true, message: `all listed categories`, data:recipes },
       { status: 200 }
@@ -97,7 +97,7 @@ export async function POST(request: NextRequest) {
         where: { id: newRecipe.id },
         include: { tags: true, category: true },
       });
-    }); 
+      }); 
 
     return NextResponse.json(
       { success: true, message: `New Reciepe Added`},
@@ -173,7 +173,6 @@ export async function DELETE(request: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
-    console.log(error);
     return NextResponse.json(
       { success: false, message: 'Internal Server Error' },
       { status: 500 }

@@ -6,24 +6,30 @@ import { usePathname } from 'next/navigation';
 import { Home, Book, Info, Mail } from 'lucide-react';
 import { ModeToggle } from '../theme/mode-toggle';
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
 
 const navItems = [
   { href: '/', label: 'Home', icon: Home },
   { href: '/recipes', label: 'Recipes', icon: Book },
   { href: '/about', label: 'About', icon: Info },
-  { href: '/contactUs', label: 'Contact', icon: Mail },
+  { href: '/contact', label: 'Contact', icon: Mail },
 ];
 
 export function Navigation() {
   const pathname = usePathname();
-
   return (
     <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="relative flex h-16 items-center xl:mx-40">
         {/* Logo (Left) */}
-        <div className="flex-[0.4] max-sm:flex-[0.6] flex items-center">
+        <div className="flex-[0.4] max-sm:flex-[0.6] flex items-center ">
           <Link href="/" className="flex items-center">
-            <img src="/logo.svg" alt="logog" className=" " />
+            <Image
+              src="/logo.png"
+              width={220}
+              height={50}
+              alt="logo"
+              className="mix-blend-darken dark:mix-blend-lighten"
+             />
           </Link>
         </div>
 

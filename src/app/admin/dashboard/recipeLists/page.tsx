@@ -17,11 +17,14 @@ import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { recipeListSchema } from '@/Schemas/recipes';
 import { deleteReciepe, getAllRecipes } from '@/actions/admin/recipes-actions';
+import UpdateRecipe from '@/components/adminOnly/recipe/update-recipe';
 
 export default function RecipesPage() {
   const [recipes, setRecipes] = useState<recipeListSchema[]>();
-  const router = useRouter();
+  const [loadForm,setLoadForm] = useState<boolean>(false);
 
+  const router = useRouter();
+  
   useEffect(() => {
     const getCategoryDetails = async () => {
       try {
@@ -36,6 +39,7 @@ export default function RecipesPage() {
 
   const handleEdit = (recipe: any) => {
     //direct the user to update page with pre filled recipe data
+    setLoadForm(true)
   };
 
   const handleDelete = async (id: string) => {
@@ -50,7 +54,14 @@ export default function RecipesPage() {
       toast.error(error);
     }
   };
-
+  
+ if(loadForm){
+  return (
+    <div>
+    <UpdateRecipe/>
+  </div>
+  )
+ }else{
   return (
     <div className="w-full p-4 m-2">
       <div className="flex justify-between items-center mb-6">
@@ -62,7 +73,7 @@ export default function RecipesPage() {
       </div>
       <Card>
         <Table>
-          <TableHeader>
+          <TableHeader> 
             <TableRow>
               <TableHead>Title</TableHead>
               {/* <TableHead>Category</TableHead> */}
@@ -123,6 +134,8 @@ export default function RecipesPage() {
       </Card>
     </div>
   );
+ }
+  
 }
 
 

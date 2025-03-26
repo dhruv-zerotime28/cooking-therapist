@@ -1,8 +1,11 @@
+'use Client'
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown} from "lucide-react";
+// import { motion } from "framer-motion";
+import { Instagram , Facebook,  Youtube ,Twitter} from 'lucide-react';
 
 const topRatedRecipes = [
   {
@@ -69,6 +72,11 @@ const categories = [
     count: 36,
   },
 ];
+const posts = [
+  { id: 1, image: "/images/post1.jpg" },
+  { id: 2, image: "/images/post2.jpg" },
+  { id: 3, image: "/images/post3.jpg" },
+];
 
 export default function Home() {
   return (
@@ -76,7 +84,7 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative h-screen min-h-[600px]">
         <Image
-          src="https://images.unsplash.com/photo-1495521821757-a1efb6729352?auto=format&fit=crop&q=80&w=2000"
+          src="/heroImg.jpg"
           alt="Cooking background"
           fill
           className="object-cover brightness-50"
@@ -84,18 +92,18 @@ export default function Home() {
         />
         <div className="relative flex h-full flex-col items-center justify-center text-center text-white">
           <h1 className="mb-6 text-4xl font-bold leading-tight sm:text-5xl md:text-6xl lg:text-7xl">
-            Discover the Joy of
+            Change the way you Cook
             <br />
             <span className="text-primary">Cooking Therapy</span>
           </h1>
           <p className="mb-8 max-w-2xl text-lg text-gray-200 md:text-xl">
-            Transform your kitchen into a sanctuary of creativity and wellness with our curated recipes and cooking guides.
+          Transform your kitchen into a space of creativity, comfort, and wellness. Explore thoughtfully curated recipes and mindful cooking guides that nourish both your body and soul.
           </p>
           <div className="flex flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
             <Button size="lg" className=" hover:secondary" asChild>
               <Link href="/recipes">Explore Recipes</Link>
             </Button>
-            <Button size="lg" variant="outline" className="border-white  hover:bg-white text-primary text-md">
+            <Button size="lg" variant="outline" className="border-white  hover:bg-white hover:text-primary text-primary text-md">
               <Link href="/about">Learn More</Link>
             </Button>
           </div>
@@ -104,15 +112,13 @@ export default function Home() {
           </div>
         </div>
       </section>
-
       {/* Mission Statement */}
       <section className="bg-muted py-16">
         <div className="">
           <div className="mx-auto max-w-3xl text-center">
             <h2 className="mb-6 text-3xl font-bold md:text-4xl">Our Mission</h2>
             <p className="text-lg text-muted-foreground">
-              At Cooking Therapist, we believe that cooking is more than just preparing meals—it's a form of therapy that brings joy, creativity, and connection to our lives. Our curated collection of recipes and cooking guides is designed to help you discover the therapeutic benefits of cooking while creating delicious dishes for yourself and your loved ones.
-            </p>
+            At Cooking Therapist, our mission is to inspire mindful cooking as a form of self-care, creativity, and healing. We believe that the kitchen is more than just a place to prepare meals—it’s a sanctuary where flavors, emotions, and well-being come together. Through thoughtfully curated recipes and expert cooking guides, we empower individuals to find joy, relaxation, and nourishment in every dish they create.</p>
           </div>
         </div>
       </section>
