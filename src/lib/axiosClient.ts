@@ -1,28 +1,43 @@
 import axios, { AxiosRequestConfig, Method } from "axios";
+import { cookies } from "next/headers";
 
 export interface IApiResponse {
     success: boolean;
     data?: any;
     message: string;
   }
+
+  export interface IApiError {
+    status: number;
+    message: string;
+    details?: any; 
+  }
+
 const axiosClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL, // Use NEXT_PUBLIC for client-side access
-  timeout: 5000,
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL, 
+  timeout: 10000,
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-// Response Interceptor for Better Error Handling
+
 axiosClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.error("API Error:", error.response?.data || error.message);
-    return Promise.reject(error);
+    const apiError: IApiError = {
+      status: error.response?.status || 500,
+      message: error.response?.data?.message || "An unknown error occurred",
+      details: error.response?.data || null,
+    };
+
+    console.log("API Error:", apiError);
+    return Promise.reject(apiError);
   }
 );
 
-// Define the API request parameters type
+
 interface ApiRequestParams {
   method: Method;
   url: string;
@@ -46,7 +61,7 @@ export async function apiRequest<T>({
   data = null,
   params = {},
   headers = {},
-}: ApiRequestParams): Promise<T> {
+}: ApiRequestParams): Promise<T> { 
   try {
     const config: AxiosRequestConfig = {
       method,
@@ -59,8 +74,14 @@ export async function apiRequest<T>({
     const response = await axiosClient(config);
     return response.data as T;
   } catch (error: any) {
-    console.error(`API Error [${method} ${url}]:`, error.response?.data || error);
-    throw new Error(error.response?.data?.message || "API request failed");
+    const apiError: IApiError = {
+      status: error.status || 500,
+      message: error.message || "API request failed",
+      details: error.details || null,
+    };
+
+    console.log(`API Error [${method} ${url}]:`, apiError);
+    throw apiError.message;
   }
 }
 

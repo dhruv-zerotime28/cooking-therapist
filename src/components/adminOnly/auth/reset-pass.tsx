@@ -8,8 +8,10 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff } from 'lucide-react';
-import { resetPassForm, resetPassSchema } from '@/Schemas/auth';
+import { resetPassForm, resetPassSchema,resetPassApiType} from '@/Schemas/auth';
 import { toast } from 'sonner';
+import { useSearchParams } from 'next/navigation';
+import { resetPasswordApiCall } from '@/actions/admin/auth-actions';
 
 interface showPassbtn {
   pass : boolean,
@@ -18,7 +20,12 @@ interface showPassbtn {
 
 export function ResetPassword() {
   const [showPassword, setShowPassword] = useState<showPassbtn>({pass : false,confirmPass:false});
+  const searchParams = useSearchParams();
 
+  const resetToken = searchParams.get("token")|| '';
+  const email = searchParams.get("email") || '';
+  const id = searchParams.get("id")||'';
+  console.log("token:",resetToken,"id:",email,"id:",id)
   const {
     register,
     handleSubmit,
@@ -34,8 +41,19 @@ export function ResetPassword() {
     },
   });
 
-  const formSubmit = (data: any) => {
-    console.log(data);
+  const formSubmit = async(data: any) => {
+    const reqData:resetPassApiType = {
+      email,
+      id,
+      token : resetToken,
+      password : data.password
+    }
+    try {
+      const res = await resetPasswordApiCall(reqData);
+      toast.success(res as string)
+    } catch (error) {
+      toast.error(error as string)
+    }
     reset()
   };
 

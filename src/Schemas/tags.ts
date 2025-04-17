@@ -16,7 +16,8 @@ export const deleteTagReqType = tag.omit({
 export type tagType = z.infer<typeof tag>;
 
 const tagsAdminDetails = tag.extend({
-    count : z.number().nonnegative({message:"count can't be negative"})
+    count : z.number().nonnegative({message:"count can't be negative"}),
+    createdAt : z.date()
 })
 
 export type adminTagsType = z.infer<typeof tagsAdminDetails>

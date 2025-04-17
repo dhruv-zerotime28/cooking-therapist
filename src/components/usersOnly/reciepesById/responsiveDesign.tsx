@@ -6,11 +6,14 @@ import {
   CarouselItem,
 } from '@/components/ui/carousel';
 
-
+interface ItagsCat {
+  id : string,
+  name : string
+}
 interface IMobileProps{
     images : string[],
-    tags : string[],
-    categories :string[]
+    tags : ItagsCat[],
+    categories :ItagsCat[]
 }
 export const ImagesAndInforMobile = (data:IMobileProps) => {
   return (
@@ -44,12 +47,12 @@ export const ImagesAndInforMobile = (data:IMobileProps) => {
         Categories
       </h3>
       <div className="flex flex-wrap gap-2">
-        {data.categories.map((category, index) => (
+        {data.categories.map((category) => (
           <span
-            key={index}
+            key={category.id}
             className="rounded-full bg-gray-200 px-3 py-1 text-sm text-gray-700"
           >
-            {category}
+            {category.name}
           </span>
         ))}
       </div>
@@ -58,12 +61,12 @@ export const ImagesAndInforMobile = (data:IMobileProps) => {
     <div className="mb-6">
       <h3 className="text-lg font-semibold text-primary mb-2">Tags</h3>
       <div className="flex flex-wrap gap-2">
-        {data.tags.map((tag, index) => (
+        {data.tags.map((tag) => (
           <span
-            key={index}
+            key={tag.id}
             className="rounded-full bg-gray-200 px-3 py-1 text-sm text-gray-700"
           >
-            {tag}
+            {tag.name}
           </span>
         ))}
       </div>
@@ -101,12 +104,12 @@ export const ImagesAndInfoWindow = (data:IMobileProps) => {
             Categories
           </h3>
           <div className="flex flex-wrap gap-2">
-            {data.categories.map((category, index) => (
+            {data.categories.map((category) => (
               <span
-                key={index}
+                key={category.id}
                 className="rounded-full bg-gray-200 px-3 py-1 text-sm text-gray-700"
               >
-                {category}
+                {category.name}
               </span>
             ))}
           </div>
@@ -114,12 +117,12 @@ export const ImagesAndInfoWindow = (data:IMobileProps) => {
         <div className="mb-6 hidden lg:block">
           <h3 className="text-lg font-semibold text-primary mb-2">Tags</h3>
           <div className="flex flex-wrap gap-2">
-            {data.tags.map((tag, index) => (
+            {data.tags.map((tag) => (
               <span
-                key={index}
+                key={tag.id}
                 className="rounded-full bg-gray-200 px-3 py-1 text-sm text-gray-700"
               >
-                {tag}
+                {tag.name}
               </span>
             ))}
           </div>

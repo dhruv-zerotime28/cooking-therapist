@@ -9,7 +9,7 @@ export function validateRequest<T>(schema: z.Schema<T>, data: unknown) {
       .flatMap(([field, messages]) =>
         (messages as string[])?.map((msg) => `${field}: ${msg}`) || []
       );
-
+    console.log('validation err:',result)
     return NextResponse.json({ success: false, errors }, { status: 400 });
   }
 

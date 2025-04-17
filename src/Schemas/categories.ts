@@ -16,7 +16,8 @@ export const deleteCategoryType = categorySchema.omit({
 export type categoryType = z.infer<typeof categorySchema>;
 
 const categoryDetailsAdmin = categorySchema.extend({
-    count : z.number().nonnegative({message:"count can't be negative"})
+    count : z.number().nonnegative({message:"count can't be negative"}),
+    createdAt : z.date()
 })
 
 export type adminCategoryType = z.infer<typeof categoryDetailsAdmin>
