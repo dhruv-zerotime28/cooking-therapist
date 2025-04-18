@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/db/prisma';
+import logger from '@/lib/logger';
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -82,6 +83,7 @@ export async function GET(req: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
+    logger.debug('api err in fetching recipe lists :', error)
     return NextResponse.json(
       { success: false, message: 'Internal Server Error' },
       { status: 500 }

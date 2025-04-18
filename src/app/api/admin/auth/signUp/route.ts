@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { validateRequest } from '@/lib/validate';
 import { authSchema} from '@/Schemas/auth';
 import bcrypt from 'bcryptjs';
-
+import logger from '@/lib/logger';
 
 export async function POST(request: NextRequest) {
   try {
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
 
     return response;
   } catch (error) {
-    console.log('sign In err:', error);
+    logger.debug('api err signUp :', error);(error);
     return NextResponse.json(
       { success: false, message: 'Internal Server Error' },
       { status: 500 }

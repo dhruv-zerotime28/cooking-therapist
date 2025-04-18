@@ -3,6 +3,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { validateRequest } from '@/lib/validate';
 import { resetPassApiSchema } from '@/Schemas/auth';
 import bcrypt from 'bcryptjs';
+import logger from '@/lib/logger';
+
 
 interface ITokenStored {
   resetToken: string;
@@ -71,7 +73,7 @@ export async function POST(request: NextRequest) {
     return response;
    
   } catch (error) {
-    console.log('sign In err:', error);
+    logger.debug('api err in reset password :', error);(error);
     return NextResponse.json(
       { success: false, message: 'Internal Server Error' },
       { status: 500 }

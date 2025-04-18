@@ -6,6 +6,7 @@ import {
   categorySchema,
   deleteCategoryType,
 } from '@/Schemas/categories';
+import logger from '@/lib/logger';
 
 export async function GET(req : NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -38,7 +39,7 @@ export async function GET(req : NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.log(error);
+    logger.debug('api err while fetching the all categories:', error);
     return NextResponse.json(
       { success: false, message: 'Internal Server Error' },
       { status: 500 }
@@ -87,7 +88,7 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.log(error);
+    logger.debug('api err in category add :', error)
     return NextResponse.json(
       { success: false, message: 'Internal Server Error' },
       { status: 500 }
@@ -128,7 +129,7 @@ export async function DELETE(request: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
-    console.log(error);
+     logger.debug('api err in category dlt:', error);
     return NextResponse.json(
       { success: false, message: 'Internal Server Error' },
       { status: 500 }
@@ -173,6 +174,7 @@ export async function PATCH(request: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
+    logger.debug('api err in updating category:', error);
     return NextResponse.json(
       { success: false, message: 'Internal Server Error!' },
       { status: 500 }

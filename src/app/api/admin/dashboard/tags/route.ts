@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { validateRequest } from '@/lib/validate';
 import prisma from '@/db/prisma';
 import { tagReq, tag, deleteTagReqType } from '@/Schemas/tags';
-
+import logger from '@/lib/logger';
 
 export async function GET(req : NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -32,6 +32,7 @@ export async function GET(req : NextRequest) {
       { status: 200 }
     );
   } catch (error) {
+    logger.debug('api err while fetching tags:', error)
     return NextResponse.json(
       { success: false, message: 'Internal Server Error' },
       { status: 500 }
@@ -77,6 +78,7 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
+    logger.debug('api err while adding tags :', error)
     return NextResponse.json(
       { success: false, message: 'Internal Server Error' },
       { status: 500 }
@@ -116,7 +118,7 @@ export async function DELETE(request: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
-    console.log(error)
+    logger.debug('api err while delting tags:', error)
     return NextResponse.json(
       { success: false, message: 'Internal Server Error' },
       { status: 500 }
@@ -159,6 +161,7 @@ export async function PATCH(request: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
+    logger.debug('api err while updating tags :', error)
     return NextResponse.json(
       { success: false, message: 'Internal Server Error!' },
       { status: 500 }

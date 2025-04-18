@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { validateRequest } from '@/lib/validate';
 import { sendContactUsReply } from '@/lib/nodeMailer';
 import { MessageReplySchema } from '@/Schemas/contactUs';
-
+import logger from '@/lib/logger';
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -39,7 +39,7 @@ export async function GET(req: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.log(error);
+    logger.debug('api err in fetching messages :', error)
     return NextResponse.json(
       { success: false, message: 'Internal Server Error' },
       { status: 500 }
@@ -72,7 +72,7 @@ export async function PATCH(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.log(error);
+    logger.debug('api err while contact patch req :', error)
     return NextResponse.json(
       { success: false, message: 'Internal Server Error' },
       { status: 500 }
@@ -103,7 +103,7 @@ export async function DELETE(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.log(error);
+    logger.debug('api err while deleting the msg :', error)
     return NextResponse.json(
       { success: false, message: 'Internal Server Error' },
       { status: 500 }

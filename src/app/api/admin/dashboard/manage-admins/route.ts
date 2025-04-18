@@ -7,6 +7,8 @@ import { newAdminCredentials } from '@/lib/nodeMailer';
 import bcrypt from 'bcryptjs';
 import { checkAdminDetails } from '@/lib/checkAdminId';
 import { adminManagementTable } from '@/Schemas/admin';
+import logger from '@/lib/logger';
+
 
 export async function GET(req : NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -44,6 +46,7 @@ export async function GET(req : NextRequest) {
       { status: 200 }
     );
   } catch (error) {
+    logger.debug('api err while fetching the admins :', error);(error);
     return NextResponse.json(
       { success: false, message: 'Internal Server Error' },
       { status: 500 }
@@ -104,6 +107,7 @@ export async function POST(request: NextRequest) {
     }
     
   } catch (error) {
+    logger.debug('api err while adding new admin:', error);(error);
     return NextResponse.json(
       { success: false, message: 'Internal Server Error' },
       { status: 500 }
@@ -123,9 +127,6 @@ export async function PATCH(request: NextRequest) {             //change passwor
       );
     }else{
       await checkAdminDetails(adminId);
-      // if (AdminIdConfirm instanceof NextResponse) {
-      //   return AdminIdConfirm;
-      // }
     }  
 
     const body = await request.json();
@@ -178,6 +179,7 @@ export async function PATCH(request: NextRequest) {             //change passwor
     return response
 
   } catch (error) {
+    logger.debug('api err while updating the admin info:', error)
     return NextResponse.json(
       { success: false, message: 'Internal Server Error!' },
       { status: 500 }

@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/db/prisma';
+import logger from '@/lib/logger';
 
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const id = (await params).id;
-  // console.log('param:',paramId)
+
   try {
     const recipe = await prisma.recipe.findUnique({
       where: {
@@ -51,6 +52,7 @@ export async function GET(
       { status: 200 }
     );
   } catch (error) {
+    logger.debug('api err in fetching recipes :', error);(error);
     return NextResponse.json(
       { success: false, message: 'Internal Server Error' },
       { status: 500 }
@@ -78,7 +80,6 @@ export async function POST(
       },
     });
 
-    console.log('matching tags', recipesWithMatchingTags);
 
     const tagMatchCount: Record<string, number> = {};
 
@@ -86,14 +87,12 @@ export async function POST(
       tagMatchCount[recipeId] = (tagMatchCount[recipeId] || 0) + 1;
     });
 
-    console.log('match count :', tagMatchCount);
-
     const sortedRelatedRecipeIds = Object.entries(tagMatchCount)
       .sort((a, b) => b[1] - a[1]) // sort descending by match count
       .slice(0, 4) // get top 4
       .map(([recipeId]) => recipeId);
 
-    console.log('sortedRelatedRecipes:', sortedRelatedRecipeIds);
+
     const relatedRecipes = await prisma.recipe.findMany({
       where: {
         id: { in: sortedRelatedRecipeIds },
@@ -109,8 +108,6 @@ export async function POST(
       },
     });
 
-    console.log('relatedRecipes:', relatedRecipes);
-
     return NextResponse.json(
       {
         success: true,
@@ -120,6 +117,7 @@ export async function POST(
       { status: 200 }
     );
   } catch (error) {
+    logger.debug('api err in getting related recipes:', error)
     return NextResponse.json(
       { success: false, message: 'Internal Server Error' },
       { status: 500 }

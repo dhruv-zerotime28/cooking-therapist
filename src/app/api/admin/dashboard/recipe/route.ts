@@ -5,6 +5,7 @@ import prisma from '@/db/prisma';
 import { reciepeIdType } from '@/Schemas/recipes';
 import { S3Client, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { deleteMultipleFromS3 } from '@/lib/DeleteImages';
+import logger from '@/lib/logger';
 
 interface ITag {
   id: string;
@@ -53,6 +54,7 @@ export async function GET(req: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
+    logger.debug('api err in fetching recipes :', error);
     return NextResponse.json(
       { success: false, message: 'Internal Server Error' },
       { status: 500 }
@@ -131,13 +133,15 @@ export async function POST(request: NextRequest) {
       });
     });
 
+    logger.debug('transaction quries details in recipes :', recipe);
     return NextResponse.json(
       { success: true, message: `New Reciepe Added` },
       { status: 201 }
     );
   } catch (error) {
     const dltImages = await deleteMultipleFromS3(body.images);
-    console.log('err while adding recipe:', error);
+    logger.debug('images deletion info in case of err :', dltImages);
+    logger.debug('api err while adding recipe :', error);
     return NextResponse.json(
       { success: false, message: 'Internal Server Error' },
       { status: 500 }
@@ -265,15 +269,23 @@ export async function PATCH(request: NextRequest) {
       });
     });
 
+    logger.debug('transaction quries details in update recipes :', recipe);
+
     const dltImages = await deleteMultipleFromS3([...removedUrls]);
+    logger.debug(
+      'images deletion info when deleted in update recipes:',
+      dltImages
+    );
 
     return NextResponse.json(
       { success: true, message: `recipe details updated!` },
       { status: 200 }
     );
   } catch (error) {
-    console.log(error);
+    logger.debug('api err while updating recpipe:', error);
     await deleteMultipleFromS3(body.newUrls);
+    logger.debug('images deletion info in case of err :', deleteMultipleFromS3);
+
     return NextResponse.json(
       { success: false, message: 'Internal Server Error!' },
       { status: 500 }
@@ -314,6 +326,8 @@ export async function DELETE(request: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
+    logger.debug('api err while deleting recipe :', error);
+    error;
     return NextResponse.json(
       { success: false, message: 'Internal Server Error' },
       { status: 500 }

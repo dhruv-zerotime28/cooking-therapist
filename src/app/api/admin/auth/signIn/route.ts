@@ -4,7 +4,7 @@ import { validateRequest } from '@/lib/validate';
 import { signInSchema } from '@/Schemas/auth';
 import bcrypt from 'bcryptjs';
 import { generateToken } from '@/lib/tokens';
-
+import logger from '@/lib/logger';
 
 const secretkey = `${process.env.JWT_SECRET_KEYS}`;
 const enviorment = `${process.env.CT_ENV}`;
@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
 
     return response;
   } catch (error) {
-    console.log('sign In err:', error);
+    logger.debug('api err in signIn :', error);(error);
     return NextResponse.json(
       { success: false, message: 'Internal Server Error' },
       { status: 500 }

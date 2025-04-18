@@ -4,11 +4,12 @@ import { validateRequest } from '@/lib/validate';
 import { emailScehma } from '@/Schemas/auth';
 import crypto from 'crypto';
 import { SendPasswordResetLink } from '@/lib/nodeMailer';
+import logger from '@/lib/logger';
+
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    console.log(body)
+    const body = await request.json(); 
     const validate = validateRequest(emailScehma, body.email);
     if (validate instanceof NextResponse) {
       return validate;
@@ -49,7 +50,7 @@ export async function POST(request: NextRequest) {
     return res;
   
   } catch (error) {
-    console.log('forgot pass err:', error);
+    logger.debug('api err in forgot password :', error);(error);
     return NextResponse.json(
       { success: false, message: 'Internal Server Error' },
       { status: 500 }

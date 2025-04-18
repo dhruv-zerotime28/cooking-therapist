@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import logger from '@/lib/logger';
+
 
 const s3Client = new S3Client({
   region: process.env.AWS_REGION,
@@ -49,7 +51,7 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
-    console.error(error);
+    logger.debug('api err while genering pre-signed url :', error)
     return NextResponse.json(
       { error: 'Something went wrong' },
       { status: 500 }

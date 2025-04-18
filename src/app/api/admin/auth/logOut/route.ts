@@ -1,6 +1,8 @@
 import prisma from '@/db/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 import { checkAdminDetails } from '@/lib/checkAdminId';
+import logger from '@/lib/logger';
+
 
 const enviorment = `${process.env.CT_ENV}`;
 
@@ -16,9 +18,6 @@ export async function POST(request: NextRequest) {
       );
     }else{
       const AdminIdConfirm = checkAdminDetails(id);
-      // if (AdminIdConfirm instanceof NextResponse) {
-      //   return AdminIdConfirm;
-      // }
     }  
 
     const response = NextResponse.json(
@@ -30,7 +29,7 @@ export async function POST(request: NextRequest) {
 
     return response;
   } catch (error) {
-    console.log('sign In err:', error);
+    logger.debug('api err in logOut :', error);(error);
     return NextResponse.json(
       { success: false, message: 'Internal Server Error' },
       { status: 500 }
