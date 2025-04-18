@@ -15,35 +15,38 @@ datasource db {
 
 model Tag {
   id        String      @id @unique @default(cuid())
-  name      String
+  name      String      @unique
   recipes   RecipeTag[]
+  recipesCount Int
   createdAt DateTime    @default(now()) @map(name: "created_at")
   updatedAt DateTime    @updatedAt @map(name: "updated_at")
 }
 
 model Category {
   id        String           @id @unique @default(cuid())
-  name      String
+  name      String           @unique
   recipes   RecipeCategory[]
+  recipesCount Int
   createdAt DateTime         @default(now()) @map(name: "created_at")
   updatedAt DateTime         @updatedAt @map(name: "updated_at")
 }
 
 model Recipe {
   id          String           @id @unique @default(cuid())
-  name        String
+  name        String           @unique
   description String
   images      String[]
-  ingredients  Json
+  ingredients Json
   instruction String[]
-  prepTime    Int? 
+  prepTime    Int?
   cookTime    Int
   cuisine     String
-  serves      String  //update it to num
+  serves      String
   notes       String[]
   rating      Int?
   tags        RecipeTag[]
   category    RecipeCategory[]
+  isActive    Boolean          @default(true)
   createdAt   DateTime         @default(now()) @map(name: "created_at")
   updatedAt   DateTime         @updatedAt @map(name: "updated_at")
 }
@@ -54,8 +57,8 @@ model RecipeTag {
   recipeId String
   tagId    String
 
-  recipe Recipe @relation(fields: [recipeId], references: [id],onDelete: Cascade)
-  tag    Tag    @relation(fields: [tagId], references: [id],onDelete: Cascade)
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
 
   @@id([recipeId, tagId])
 }
@@ -64,10 +67,15 @@ model RecipeCategory {
   recipeId   String
   categoryId String
 
-  recipe   Recipe   @relation(fields: [recipeId], references: [id],onDelete: Cascade)
-  category Category @relation(fields: [categoryId], references: [id],onDelete: Cascade)
+  recipe   Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
   @@id([recipeId, categoryId])
+}
+
+enum Status{
+  READ
+  UNREAD
 }
 
 model contactUs {
@@ -75,6 +83,7 @@ model contactUs {
   name      String
   email     String
   message   String
+  status    Status   @default(UNREAD)
   createdAt DateTime @default(now()) @map(name: "created_at")
 }
 
@@ -87,4 +96,21 @@ model aboutUs {
   social      String[]
 }
 
-//author/owner/admin routes to be include 
+model admin {
+  id            String   @id @unique @default(uuid())
+  name          String
+  email         String   @unique
+  password      String
+  createdBy     admin?   @relation("AdminCreatedBy", fields: [createdById], references: [id])
+  createdById   String? // Optional Foreign Key
+  createdAdmins admin[]  @relation("AdminCreatedBy")
+  createdAt     DateTime @default(now()) @map(name: "created_at")
+  updatedAt     DateTime @updatedAt @map(name: "updated_at")
+}
+
+model ResetPasswordToken {
+  tokenId     String   @id @unique @default(uuid()) @map("id")
+  email       String   @unique
+  token       String
+  tokenExpiry DateTime
+}

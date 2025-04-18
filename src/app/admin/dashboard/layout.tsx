@@ -10,7 +10,7 @@ import {
   SidebarTrigger,
   SidebarInset,
 } from '@/components/ui/sidebar';
-import { AdminSideBar } from '@/components/adminOnly/sidebar/admin-sidebar';
+import { AdminSideBar } from '@/components/adminOnly/dashboard-common/sidebar/admin-sidebar';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -20,14 +20,18 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import { Separator } from '@/components/ui/separator';
+import { NavAdmin } from '@/components/adminOnly/dashboard-common/header/admin-profile';
 
-
+const user = {
+  name : "aamir",
+  email : "am@gmail.com",
+}
 export default function dashBoardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const pathname = usePathname();
+  const pathname = usePathname(); 
   const lastSegment = pathname.split('/').filter(Boolean).pop();
 
   return (
@@ -35,8 +39,9 @@ export default function dashBoardLayout({
             <AdminSideBar />
             <SidebarInset>
               <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+                <div className='flex justify-between w-full'>
                 <div className="flex items-center gap-2 px-4">
-                  <SidebarTrigger className="-ml-1" />
+                  <SidebarTrigger className="-ml-1"/>
                   <Separator orientation="vertical" className="mr-2 h-4" />
                   <Breadcrumb>
                     <BreadcrumbList>
@@ -53,6 +58,10 @@ export default function dashBoardLayout({
                       </BreadcrumbItem>
                     </BreadcrumbList>
                   </Breadcrumb>
+                </div>
+                <div className='p-1 mx-4'>
+                <NavAdmin user={user}/>
+                </div>
                 </div>
               </header>
               <main className="w-full">{children}</main>
